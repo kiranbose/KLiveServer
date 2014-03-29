@@ -7,6 +7,7 @@
 package Globals;
 
 import VideoStore.VideoLibrary;
+import kliveserver.PeerController;
 
 /**
  * All global data will be stored here.
@@ -17,9 +18,10 @@ public class GlobalData {
     public static String RTPVideoStorePath = "c://KLiveServer/RTPVideos";
     public static boolean logEnabled = true;
     public static VideoLibrary videoLibrary;
-    
+    public static PeerController peerController;
     public static void init()
     {
         videoLibrary = new VideoLibrary();
+        peerController = new PeerController();
     }
 }

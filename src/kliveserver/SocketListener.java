@@ -1,0 +1,53 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package kliveserver;
+
+import java.io.DataInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ *
+ * @author Kiran
+ */
+public class SocketListener {
+    public void StartServerOn(int port)
+    {
+        try{
+            ServerSocket server = new ServerSocket(port);
+            Socket clientSocket;
+            DataInputStream dis;
+            while(true)
+            {
+                clientSocket = server.accept();
+                try{
+                    dis = new DataInputStream(clientSocket.getInputStream());
+                    String request = dis.readLine();
+                    if(request.equalsIgnoreCase("control"))
+                    {
+                        String userID = dis.readLine();
+                        Globals.log.message(userID+": Connected for control ");
+                        Globals.GlobalData.peerController.addPeer(clientSocket,userID);
+                    }
+                    else if(request.equalsIgnoreCase("upload"))
+                    {
+                        String userID = dis.readLine();
+                        String fileName = dis.readLine();
+                        String fileSize = dis.readLine();
+                        Globals.log.message(userID+": Reciever upload: "+fileName+ " of size "+fileSize);
+                        VideoUpload uploader = new VideoUpload(clientSocket,fileName,fileSize);
+                        uploader.start();
+                    }
+                }catch(Exception e){e.printStackTrace();}
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }   
+    }
+}

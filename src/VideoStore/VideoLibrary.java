@@ -1,7 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/*@author kiran bose
+ * create and search for video store files
+ * create a library. add files to library.
+ * call rtpfilegenerator class, where it calls vlc and stream.
+ * Populates Vector<videolist> and initialze videolist elements.
  */
 
 package VideoStore;
@@ -69,11 +70,8 @@ public class VideoLibrary {
             }
             else
             {
-                Globals.log.error(videoFolder.getCanonicalPath()+ " folder is empty. no video to sttream ");
+                Globals.log.error(videoFolder.getCanonicalPath()+ " folder is empty. no video to stream ");
             }
-            
-            
-            
             
         } catch (Exception ex) {
             ex.printStackTrace();

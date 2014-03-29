@@ -6,6 +6,9 @@
 
 package kliveserver;
 
+import java.net.ServerSocket;
+import java.net.Socket;
+
 
 /**
  *main class for application
@@ -16,6 +19,8 @@ public class KliveServer {
     public static void main(String args[])
     {
         Globals.GlobalData.init();
+        SocketListener server = new SocketListener();
+        server.StartServerOn(80);
     }
 }
 
