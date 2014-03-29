@@ -46,27 +46,12 @@ public class VideoLibrary {
                        
             }
            
-            if(videoFolder.list().length>0){
-            
-                for(final File fileEntry : videoFolder.listFiles())
+            if(videoFolder.list().length>0)
             {
-                VideoDetails obj=new VideoDetails();
-                obj.fileName=fileEntry.getName();
-                String logFilePath=fileEntry.getName()+"//rtp.log";
-                File logFile = new File(logFilePath);
-                if(logFile.exists()&& !logFile.isDirectory())
+                for(final File fileEntry : videoFolder.listFiles())
                 {
-                    obj.RTPEncodingAvaliable=true;
+                    addVideo(fileEntry.getCanonicalPath());
                 }
-              
-                videoList.add(obj);
-                Globals.log.message("adding video "+obj.fileName+" to library");
-            }
-                
-                //test RTPFileGenerator. remove after done
-                RTP.RTPFileGenerator.createRtpFileSegments(Globals.GlobalData.VideoStorePath+"/test3.mp4", 
-                        Globals.GlobalData.RTPVideoStorePath+"/test3.mp4");
-                
             }
             else
             {
@@ -78,7 +63,21 @@ public class VideoLibrary {
         }
     }
     
-    
+    public void addVideo(String filePath)
+    {
+        File fileEntry = new File(filePath);
+        VideoDetails obj=new VideoDetails();
+        obj.fileName=fileEntry.getName();
+        String logFilePath=Globals.GlobalData.RTPVideoStorePath+"/"+fileEntry.getName()+"/rtp.log";
+        File logFile = new File(logFilePath);
+        if(logFile.exists()&& !logFile.isDirectory())
+        {
+            obj.RTPEncodingAvaliable=true;
+            Globals.log.message("RTP encoding not avilable "+obj.fileName);
+        }
+        videoList.add(obj);
+        Globals.log.message("added video "+obj.fileName+" to library");
+    }
   
     
 }

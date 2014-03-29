@@ -46,6 +46,8 @@ public class VideoUpload extends Thread{
             }
             fout.close();
             Globals.log.message("upload complete: "+Globals.GlobalData.VideoStorePath+"/"+fileName+ " of size "+bytesRead);
+            Globals.GlobalData.videoLibrary.addVideo(Globals.GlobalData.VideoStorePath+"/"+fileName);
+            //infrom peers that new video stream is available
             dis.close();
             sock.close();
         } catch (Exception ex) {
