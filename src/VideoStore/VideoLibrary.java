@@ -78,8 +78,6 @@ public class VideoLibrary {
                 message = dis.readLine();
                 obj.duration = java.lang.Integer.parseInt(dis.readLine());
                 message = dis.readLine();
-                obj.avgBitRate = java.lang.Integer.parseInt(dis.readLine());
-                message = dis.readLine();
                 obj.numberOfChunks = java.lang.Integer.parseInt(dis.readLine());
                 dis.close();
                 fin.close();
@@ -95,6 +93,15 @@ public class VideoLibrary {
         videoList.add(obj);
         Globals.log.message("added video "+obj.fileName+" to library");
     }
-  
+    
+    public VideoDetails getVideoDetails(String videoFileName)
+    {
+        for(int i=0;i<videoList.size();i++)
+        {
+            if(videoList.elementAt(i).fileName.equals(videoFileName))
+                return videoList.elementAt(i);
+        }
+        return null;
+    }
     
 }

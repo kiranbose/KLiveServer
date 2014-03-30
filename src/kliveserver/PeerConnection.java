@@ -6,6 +6,7 @@
 
 package kliveserver;
 
+import RTP.RTPFileGenerator;
 import VideoStore.VideoDetails;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -44,6 +45,32 @@ public class PeerConnection extends Thread{
                 {
                     Globals.log.message(userID+": getChannels ");
                     sendChannelDetails();
+                }
+                else if(request.equalsIgnoreCase("stream"))
+                {
+                     
+                     String requestedFileName=dis.readLine();
+                     for(int i=0;i<Globals.GlobalData.videoLibrary.videoList.size();i++)
+                     {
+                         VideoDetails video = Globals.GlobalData.videoLibrary.videoList.elementAt(i);
+                         if(video.fileName.equals(requestedFileName))
+                         {
+                             Globals.log.message(userID+": Streaming requested for "+video.fileName);
+                             if(!video.RTPEncodingAvaliable && !video.streamingLive)
+                             {
+                                 video.streamingLive = true;
+                                 video.videoStreamStartTime = System.currentTimeMillis();
+                                 Globals.log.message(userID+": Initiating transcoding "+video.fileName);
+                                 RTPFileGenerator.createRtpFileSegments(Globals.GlobalData.VideoStorePath+"/"+requestedFileName, Globals.GlobalData.RTPVideoStorePath+"/"+requestedFileName);
+                             }
+                             else if(!video.streamingLive && video.RTPEncodingAvaliable)
+                             {
+                                 video.streamingLive = true;
+                                 video.videoStreamStartTime = System.currentTimeMillis();
+                                 //write timer to reset streaming flags in library after time 
+                             }
+                         }
+                     }
                 }
                     
             }

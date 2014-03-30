@@ -6,6 +6,8 @@
 
 package RTP;
 
+import java.io.DataInputStream;
+
 /**
  * Generates an rtp stream. Read Files from Library. creates stream and save it to RTPVideos folder
  * @author kiran bose
@@ -14,6 +16,7 @@ public class RTPFileGenerator extends Thread{
 
     String srcFilePath;
     String destFolderPath;
+    static int RTPStreamPort=1234;
     /**
      * createes a thread to transcode srcfile to rtp streams
      * returns immediately, but will continue creating the rtp stream in another thread.
@@ -37,13 +40,14 @@ public class RTPFileGenerator extends Thread{
         
         try
         {
-        
-            String cmd="C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe ";
+            RTPStreamPort++;
+            String cmd="cvlc -vvv "+srcFilePath+" --sout #rtp{dst=localhost,port="+RTPStreamPort+",mux=ts,ttl=1} ";
             Runtime rt = Runtime.getRuntime();
             Process p = rt.exec(cmd);
 
-            RTP.FileCreator.Filegen(srcFilePath,destFolderPath);
+            RTP.FileCreator.Filegen(srcFilePath,destFolderPath,RTPStreamPort);
             p.destroy();
+            
 
         }
         catch(Exception e)

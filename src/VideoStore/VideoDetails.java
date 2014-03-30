@@ -17,6 +17,7 @@ public class VideoDetails {
     public int avgBitRate;//in bits per sec
     public int numberOfChunks;
     public boolean streamingLive;
+    public long videoStreamStartTime;
 
     public VideoDetails() {
         fileName = null;
@@ -25,6 +26,7 @@ public class VideoDetails {
         avgBitRate = 0;
         numberOfChunks = 0;
         streamingLive = false;
+        videoStreamStartTime = 0;
     }
     
 }
