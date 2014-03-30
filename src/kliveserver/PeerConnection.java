@@ -41,7 +41,10 @@ public class PeerConnection extends Thread{
             {
                 String request = dis.readLine();
                 if(request.equalsIgnoreCase("getChannels"))
+                {
+                    Globals.log.message(userID+": getChannels ");
                     sendChannelDetails();
+                }
                     
             }
         } catch (Exception e) {

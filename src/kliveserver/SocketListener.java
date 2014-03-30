@@ -42,6 +42,10 @@ public class SocketListener {
                         VideoUpload uploader = new VideoUpload(clientSocket,fileName,fileSize);
                         uploader.start();
                     }
+                    else
+                    {
+                        clientSocket.close();
+                    }
                 }catch(Exception e){e.printStackTrace();}
             }
         }
