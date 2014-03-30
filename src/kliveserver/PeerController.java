@@ -6,6 +6,7 @@
 
 package kliveserver;
 
+import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.Vector;
 
@@ -44,4 +45,38 @@ public class PeerController {
         catch(Exception e){e.printStackTrace();}
     }
     
+    public void broadcastMessages(String[] message)
+    {
+        try{
+            for(int i=0;i<ConnectedPeers.size();i++)
+            {
+                PeerConnection peer = ConnectedPeers.elementAt(i);
+                if(peer.sock.isConnected())
+                {
+                    DataOutputStream dout = new DataOutputStream(peer.getOutputStream());
+                    for(int j=0;j<message.length;j++)
+                        dout.writeBytes(message[j]+"\r\n");
+                }
+            }
+        }
+        catch(Exception e){e.printStackTrace();}
+    }
+    
+    public void broadcastNewVideoAvaliable(String videoFileName)
+    {
+        String messages[] = {"NewVideoAvaliable",videoFileName};
+        broadcastMessages(messages);
+    }
+    
+    public void broadcastNewStreamLive(String videoFileName)
+    {
+        String messages[] = {"NewStreamLive",videoFileName};
+        broadcastMessages(messages);
+    }
+    
+    public void broadcastStreamDead(String videoFileName)
+    {
+        String messages[] = {"StreamDead",videoFileName};
+        broadcastMessages(messages);
+    }
 }

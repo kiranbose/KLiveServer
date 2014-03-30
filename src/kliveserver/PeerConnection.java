@@ -7,6 +7,8 @@
 package kliveserver;
 
 import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
@@ -22,6 +24,11 @@ public class PeerConnection extends Thread{
         this.userID = userID;
     }
 
+    public OutputStream getOutputStream() throws IOException
+    {
+        return sock.getOutputStream();
+    }
+    
     @Override
     public void run() {
         super.run(); 
