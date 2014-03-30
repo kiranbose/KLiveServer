@@ -8,7 +8,11 @@
 package VideoStore;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Vector;
@@ -73,8 +77,29 @@ public class VideoLibrary {
         if(logFile.exists()&& !logFile.isDirectory())
         {
             obj.RTPEncodingAvaliable=true;
-            Globals.log.message("RTP encoding not avilable "+obj.fileName);
+            Globals.log.message("RTP encoding avilable "+obj.fileName);
+            try{
+                FileInputStream fin = new FileInputStream(logFile);
+                DataInputStream dis = new DataInputStream(fin);
+                String message = dis.readLine();
+                obj.avgBitRate = java.lang.Integer.parseInt(dis.readLine());
+                message = dis.readLine();
+                obj.duration = java.lang.Integer.parseInt(dis.readLine());
+                message = dis.readLine();
+                obj.avgBitRate = java.lang.Integer.parseInt(dis.readLine());
+                message = dis.readLine();
+                obj.numberOfChunks = java.lang.Integer.parseInt(dis.readLine());
+                dis.close();
+                fin.close();
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+            
         }
+        else
+            Globals.log.message("RTP encoding not avilable for "+obj.fileName+". Convertion will be initiated at stream time.");
         videoList.add(obj);
         Globals.log.message("added video "+obj.fileName+" to library");
     }

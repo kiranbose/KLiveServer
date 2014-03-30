@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
 /**
@@ -19,13 +20,17 @@ import java.nio.ByteBuffer;
  */
 public class FileCreator {
     
-    public static void Filegen(String srcFilePath, String destFilePath) throws FileNotFoundException, IOException
+    public static void Filegen(String srcFilePath, String destFilePath) 
     {
+        int bytesRecieved = 0;
+        int fileIndex=0;
+        FileOutputStream fo=null;
+        DataOutputStream dOut=null;
+        long videoDuration = 0;
         try
         {
             int segmentLength=5;
             int counter=0;
-            int fileIndex=0;
 
             File destFolder=new File(destFilePath); 
             System.out.println(destFolder.getCanonicalPath());
@@ -33,22 +38,24 @@ public class FileCreator {
             {
               destFolder.mkdir();
             }
-            FileOutputStream fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
-            DataOutputStream dOut = new DataOutputStream(fo);
+            fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
+             dOut = new DataOutputStream(fo);
 
             DatagramSocket clientSocket = new DatagramSocket(1234);
             byte[] receiveData = new byte[10000];    
         
             DatagramPacket dp=new DatagramPacket(receiveData,receiveData.length,InetAddress.getByName("localhost"),1234);
             clientSocket.setReceiveBufferSize(5000000);
-            //clientSocket.setSoTimeout(5000);
+            clientSocket.setSoTimeout(30000);
             ByteBuffer wrapped = ByteBuffer.wrap(receiveData);
             Short timeStamp=0;
             short prevTimeStamp = -1;
+            
             while(true)
             {  
                   
                 clientSocket.receive(dp);
+                bytesRecieved+=dp.getLength();
                 System.out.println( dp.getLength());
                 dOut.writeInt(dp.getLength());  
                 timeStamp=wrapped.getShort(4);
@@ -58,23 +65,53 @@ public class FileCreator {
                 if(timeStamp!=prevTimeStamp)
                 {
                     counter++;
-                if(counter==segmentLength)
-                {
-                    dOut.close();
-                    fo.close();
-                    fileIndex++;
-                    counter=0;
-                    fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
-                    dOut = new DataOutputStream(fo);
-                }
-                prevTimeStamp = timeStamp;
+                    videoDuration++;
+                    if(counter==segmentLength)
+                    {
+                        dOut.close();
+                        fo.close();
+                        fileIndex++;
+                        counter=0;
+                        fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
+                        dOut = new DataOutputStream(fo);
+                    }
+                    prevTimeStamp = timeStamp;
             
-            }    
-         }
-      } 
-      catch (Exception e) {
-        e.printStackTrace();
-      }
-        //create log file
+                }    
+            }
+        } 
+        catch (Exception e) {
+          e.printStackTrace();
+
+        }
+        
+        Globals.log.message("RTP file generatyion complete for "+srcFilePath);
+        if(fo!=null&&dOut!=null)
+        {
+            try{
+                fo.close();
+                dOut.close();
+            }catch(Exception e){e.printStackTrace();}
+        }
+        
+        try{
+            
+            int averageDataRate = bytesRecieved/(fileIndex*5);
+            File destFolder=new File(destFilePath); 
+            fo = new FileOutputStream(destFolder+"/rtp.log");
+            dOut = new DataOutputStream(fo);
+            dOut.writeBytes("AverageDataRate\r\n");
+            dOut.writeBytes(averageDataRate+"\r\n");
+            dOut.writeBytes("VideoDuration\r\n");
+            dOut.writeBytes(videoDuration+"\r\n");
+            dOut.writeBytes("NumberOfChunks\r\n");
+            dOut.writeBytes(fileIndex+"\r\n");
+            dOut.close();
+            fo.close();
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+        
     }
 }
