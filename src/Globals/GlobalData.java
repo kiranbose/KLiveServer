@@ -14,8 +14,8 @@ import kliveserver.PeerController;
  * @author Kiran
  */
 public class GlobalData {
-    public static String VideoStorePath = "c://KLiveServer/Videos";
-    public static String RTPVideoStorePath = "c://KLiveServer/RTPVideos";
+    public static String VideoStorePath = "/home/server/Videos/KLiveServer/Videos";
+    public static String RTPVideoStorePath = "/home/server/Videos/KLiveServer/RTPVideos";
     public static boolean logEnabled = true;
     public static VideoLibrary videoLibrary;
     public static PeerController peerController;

@@ -40,16 +40,16 @@ public class VideoLibrary {
             File rtpVideoFolder= new File(Globals.GlobalData.RTPVideoStorePath);
             if(!videoFolder.exists())
             {
-                videoFolder.mkdir();
+                videoFolder.mkdirs();
                 Globals.log.message("created Video Store at : "+videoFolder.getCanonicalPath());
             }
             if(!rtpVideoFolder.exists())
             {
-                rtpVideoFolder.mkdir();
+                rtpVideoFolder.mkdirs();
                 Globals.log.message("created RTPVideo Store at : "+rtpVideoFolder.getCanonicalPath());
-                       
             }
-           
+            Globals.log.message("Video Store Location : "+videoFolder.getCanonicalPath());
+            Globals.log.message("RTPVideo Store Location : "+rtpVideoFolder.getCanonicalPath());
             if(videoFolder.list().length>0)
             {
                 for(final File fileEntry : videoFolder.listFiles())
