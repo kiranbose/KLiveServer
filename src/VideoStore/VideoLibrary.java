@@ -19,11 +19,9 @@ import java.util.Vector;
  */
 public class VideoLibrary {
     public Vector<VideoDetails> videoList;
-    public int numberOfVideos;
     
     public VideoLibrary() {
         videoList = new Vector(50);
-        numberOfVideos = 0;
         createIndex();
     }
     

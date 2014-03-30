@@ -56,6 +56,7 @@ public class PeerController {
                     DataOutputStream dout = new DataOutputStream(peer.getOutputStream());
                     for(int j=0;j<message.length;j++)
                         dout.writeBytes(message[j]+"\r\n");
+                    dout.flush();
                 }
             }
         }

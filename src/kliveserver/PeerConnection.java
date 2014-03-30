@@ -6,7 +6,9 @@
 
 package kliveserver;
 
+import VideoStore.VideoDetails;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -32,11 +34,15 @@ public class PeerConnection extends Thread{
     @Override
     public void run() {
         super.run(); 
+        //send stream details to peer
         try {
             DataInputStream dis = new DataInputStream(sock.getInputStream());
             while(true)
             {
                 String request = dis.readLine();
+                if(request.equalsIgnoreCase("getChannels"))
+                    sendChannelDetails();
+                    
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,5 +50,27 @@ public class PeerConnection extends Thread{
         Globals.GlobalData.peerController.removePeer(userID);
     }
     
-    
+    public void sendChannelDetails()
+    {
+        try {
+            DataOutputStream dout = new DataOutputStream(sock.getOutputStream());
+            for(int i=0;i<Globals.GlobalData.videoLibrary.videoList.size();i++)
+            {
+                VideoDetails video = Globals.GlobalData.videoLibrary.videoList.elementAt(i);
+                if(video.streamingLive)
+                {
+                    dout.writeBytes("streaming\r\n");
+                    dout.writeBytes(video.fileName+"\r\n");
+                }
+                else
+                {
+                    dout.writeBytes("Video\r\n");
+                    dout.writeBytes(video.fileName+"\r\n");
+                }
+            }
+            dout.flush();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
