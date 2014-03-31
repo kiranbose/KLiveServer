@@ -67,7 +67,7 @@ public class FileCreator {
                 if(timeStamp!=prevTimeStamp)
                 {
                     long newtime=System.currentTimeMillis()/1000;
-                    videoDuration++;
+                    videoDuration+= newtime-time;
                     if(newtime-time>=segmentLength)
                     {
                         dOut.close();
@@ -103,7 +103,7 @@ public class FileCreator {
         
         try{
             
-            int averageDataRate = bytesRecieved/(fileIndex*segmentLength);
+            int averageDataRate = bytesRecieved/((fileIndex+1)*segmentLength);
             File destFolder=new File(destFilePath); 
             fo = new FileOutputStream(destFolder+"/rtp.log");
             dOut = new DataOutputStream(fo);

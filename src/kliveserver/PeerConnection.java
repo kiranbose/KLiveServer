@@ -13,6 +13,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -49,28 +51,8 @@ public class PeerConnection extends Thread{
                 else if(request.equalsIgnoreCase("stream"))
                 {
                      
-                     String requestedFileName=dis.readLine();
-                     for(int i=0;i<Globals.GlobalData.videoLibrary.videoList.size();i++)
-                     {
-                         VideoDetails video = Globals.GlobalData.videoLibrary.videoList.elementAt(i);
-                         if(video.fileName.equals(requestedFileName))
-                         {
-                             Globals.log.message(userID+": Streaming requested for "+video.fileName);
-                             if(!video.RTPEncodingAvaliable && !video.streamingLive)
-                             {
-                                 video.streamingLive = true;
-                                 video.videoStreamStartTime = System.currentTimeMillis();
-                                 Globals.log.message(userID+": Initiating transcoding "+video.fileName);
-                                 RTPFileGenerator.createRtpFileSegments(Globals.GlobalData.VideoStorePath+"/"+requestedFileName, Globals.GlobalData.RTPVideoStorePath+"/"+requestedFileName);
-                             }
-                             else if(!video.streamingLive && video.RTPEncodingAvaliable)
-                             {
-                                 video.streamingLive = true;
-                                 video.videoStreamStartTime = System.currentTimeMillis();
-                                 //write timer to reset streaming flags in library after time 
-                             }
-                         }
-                     }
+                     final String requestedFileName=dis.readLine();
+                     startVideoStream(requestedFileName);
                 }
                     
             }
@@ -101,6 +83,48 @@ public class PeerConnection extends Thread{
             dout.flush();
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+    
+    public void startVideoStream(String fileName)
+    {
+        final String fname=fileName;
+        VideoDetails video = Globals.GlobalData.videoLibrary.getVideoDetails(fileName);
+        if(video==null)
+        {
+            Globals.log.error(userID+" requested invalid stream "+fileName);
+            return;
+        }
+
+        Globals.log.message(userID+": Streaming requested for "+video.fileName);
+        if(!video.RTPEncodingAvaliable && !video.streamingLive)
+        {
+            video.streamingLive = true;
+            video.videoStreamStartTime = System.currentTimeMillis();
+            Globals.log.message(userID+": Initiating transcoding "+video.fileName);
+            RTPFileGenerator.createRtpFileSegments(Globals.GlobalData.VideoStorePath+"/"+fileName, Globals.GlobalData.RTPVideoStorePath+"/"+fileName);
+        }
+        else if(!video.streamingLive && video.RTPEncodingAvaliable)
+        {
+           video.streamingLive = true;
+           video.videoStreamStartTime = System.currentTimeMillis();
+           Globals.log.message(userID+":  streaming "+video.fileName+" started at time "+video.videoStreamStartTime);
+           //start timer to reset streaming flags in library after streaming
+           Globals.log.message(userID+": Initiating timer to stop stream "+video.fileName+" after "
+                               +video.duration+"Sec");
+           Timer timer = new Timer();
+           timer.schedule(new TimerTask() {
+
+               @Override
+               public void run() {
+                   VideoDetails video = Globals.GlobalData.videoLibrary.getVideoDetails(fname);
+                   if(video.streamingLive == false)
+                       Globals.log.error(userID+": Timer trying to stop non existant stream "+fname);
+                   Globals.log.message(userID+": stream stopped by timer "+fname);
+                   video.streamingLive = false;
+                   video.videoStreamStartTime = 0;
+               }
+           },video.duration*1000);
         }
     }
 }

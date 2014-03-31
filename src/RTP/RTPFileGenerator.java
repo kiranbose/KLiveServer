@@ -41,6 +41,7 @@ public class RTPFileGenerator extends Thread{
         try
         {
             RTPStreamPort++;
+            Globals.log.message("starting video transcoder/streamer ");
             String cmd="cvlc -vvv "+srcFilePath+" --sout #rtp{dst=localhost,port="+RTPStreamPort+",mux=ts,ttl=1} ";
             Runtime rt = Runtime.getRuntime();
             Process p = rt.exec(cmd);
