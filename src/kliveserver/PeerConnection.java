@@ -12,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -66,20 +67,22 @@ public class PeerConnection extends Thread{
     {
         try {
             DataOutputStream dout = new DataOutputStream(sock.getOutputStream());
+            PrintStream ps = new PrintStream(dout);
             for(int i=0;i<Globals.GlobalData.videoLibrary.videoList.size();i++)
             {
                 VideoDetails video = Globals.GlobalData.videoLibrary.videoList.elementAt(i);
                 if(video.streamingLive)
                 {
-                    dout.writeBytes("streaming\r\n");
-                    dout.writeBytes(video.fileName+"\r\n");
+                    ps.print("streaming\r\n");
+                    ps.print(video.fileName+"\r\n");
                 }
                 else
                 {
-                    dout.writeBytes("Video\r\n");
-                    dout.writeBytes(video.fileName+"\r\n");
+                    ps.print("Video\r\n");
+                    ps.print(video.fileName+"\r\n");
                 }
             }
+            ps.flush();
             dout.flush();
         } catch (Exception ex) {
             ex.printStackTrace();

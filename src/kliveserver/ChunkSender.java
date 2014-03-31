@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,20 +39,23 @@ public class ChunkSender extends Thread{
         try 
         {
             DataOutputStream dout = new DataOutputStream(sock.getOutputStream());
+            PrintStream ps = new PrintStream(dout);
             File chunkFile = new File(Globals.GlobalData.RTPVideoStorePath+"/"+fileName+"/"+chunkNumber);
             if(!chunkFile.exists())
             {
                 Globals.log.error(chunkNumber+" of "+fileName+" does not exist");
-                dout.writeBytes("NoChunk\r\n");
+                ps.print("NoChunk\r\n");
             }
             else
             {
                 Globals.log.error("sending "+chunkNumber+" of "+fileName);
-                dout.writeBytes("ChunkSize\r\n");
-                dout.writeBytes(java.lang.Long.toString(chunkFile.length())+"\r\n");
-                dout.writeBytes("data\r\n");
+                ps.print("ChunkSize\r\n");
+                ps.print(java.lang.Long.toString(chunkFile.length())+"\r\n");
+                ps.print("data\r\n");
                 sendChunk(chunkFile,dout);
             }
+            ps.flush();
+            ps.close();
             dout.close();
             sock.close();
         } 
