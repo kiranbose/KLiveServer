@@ -42,6 +42,15 @@ public class SocketListener {
                         VideoUpload uploader = new VideoUpload(clientSocket,fileName,fileSize);
                         uploader.start();
                     }
+                    else if(request.equalsIgnoreCase("download"))
+                    {
+                        String userID = dis.readLine();
+                        String fileName = dis.readLine();
+                        String chunkNumber = dis.readLine();
+                        Globals.log.message(userID+": Recieved chunk download: "+fileName+ " " +chunkNumber);
+                        ChunkSender chunkSender = new ChunkSender(clientSocket,fileName,chunkNumber);
+                        chunkSender.start();
+                    }
                     else
                     {
                         clientSocket.close();
