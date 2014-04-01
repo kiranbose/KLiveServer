@@ -62,7 +62,11 @@ public class VideoLibrary {
     public void addVideo(String filePath)
     {
         File fileEntry = new File(filePath);
-        VideoDetails obj=new VideoDetails();
+        VideoDetails obj = getVideoDetails(fileEntry.getName());
+        if(obj==null)
+                obj=new VideoDetails();
+        else
+            Globals.log.message("New video added to library overwrites existing video.");
         obj.fileName=fileEntry.getName();
         String logFilePath=Globals.GlobalData.RTPVideoStorePath+"/"+fileEntry.getName()+"/rtp.log";
         File logFile = new File(logFilePath);

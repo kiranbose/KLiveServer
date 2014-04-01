@@ -46,12 +46,17 @@ public class VideoUpload extends Thread{
             }
             fout.close();
             Globals.log.message("upload complete: "+Globals.GlobalData.VideoStorePath+"/"+fileName+ " of size "+bytesRead);
-            Globals.GlobalData.videoLibrary.addVideo(Globals.GlobalData.VideoStorePath+"/"+fileName);
-            Globals.GlobalData.peerController.broadcastNewVideoAvaliable(fileName);
+            boolean videoAlreadyInLibrary = false;
+            if(Globals.GlobalData.videoLibrary.getVideoDetails(fileName)!=null)
+                videoAlreadyInLibrary = true;
+            Globals.GlobalData.videoLibrary.addVideo(Globals.GlobalData.VideoStorePath+"/"+fileName);//update library
+            if(!videoAlreadyInLibrary)
+                Globals.GlobalData.peerController.broadcastNewVideoAvaliable(fileName);
             dis.close();
             sock.close();
         } catch (Exception ex) {
-            Logger.getLogger(VideoUpload.class.getName()).log(Level.SEVERE, null, ex);
+            Globals.log.error("upload failed for video "+fileName);
+            ex.printStackTrace();
         }
     }
     
