@@ -16,6 +16,7 @@ public class VideoDetails {
     public int duration;
     public int avgBitRate;//in bits per sec
     public int numberOfChunks;
+    public int currentStreamingChunk;
     public boolean streamingLive;
     public long videoStreamStartTime;
 
@@ -27,6 +28,7 @@ public class VideoDetails {
         numberOfChunks = 0;
         streamingLive = false;
         videoStreamStartTime = 0;
+        currentStreamingChunk = -1;
     }
     
 }

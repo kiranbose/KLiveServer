@@ -28,7 +28,8 @@ public class FileCreator {
         FileOutputStream fo=null;
         DataOutputStream dOut=null;
         long videoDuration = 0;
-        int segmentLength=5;
+        File sourceVideo=new File(srcFilePath);
+        VideoDetails video = Globals.GlobalData.videoLibrary.getVideoDetails(sourceVideo.getName());
         try
         {
             int counter=0;
@@ -68,16 +69,16 @@ public class FileCreator {
                 {
                     long newtime=System.currentTimeMillis()/1000;
                     videoDuration+= newtime-time;
-                    if(newtime-time>=segmentLength)
+                    if(newtime-time>=RTPFileGenerator.videoSegmentLength)
                     {
                         dOut.close();
                         fo.close();
+                        video.currentStreamingChunk = fileIndex;
                         fileIndex++;
                         counter=0;
                         fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
                         dOut = new DataOutputStream(fo);
-                        File fname=new File(srcFilePath);
-                        Globals.log.message("Converting "+fname.getName()+" with SegmentDataRate : "+
+                        Globals.log.message("Converting "+sourceVideo.getName()+" with SegmentDataRate : "+
                                 (bytesInSegment/1024/5)+"KBps"+" Duration:"+videoDuration+" timeGap "+(newtime-time));
                         time=newtime;
                         bytesInSegment = 0;
@@ -103,7 +104,7 @@ public class FileCreator {
         
         try{
             
-            int averageDataRate = bytesRecieved/((fileIndex+1)*segmentLength);
+            int averageDataRate = bytesRecieved/((fileIndex+1)*RTPFileGenerator.videoSegmentLength);
             File destFolder=new File(destFilePath); 
             fo = new FileOutputStream(destFolder+"/rtp.log");
             dOut = new DataOutputStream(fo);
@@ -117,13 +118,12 @@ public class FileCreator {
             ps.close();
             dOut.close();
             fo.close();
-            File fname=new File(srcFilePath);
-            VideoDetails video = Globals.GlobalData.videoLibrary.getVideoDetails(fname.getName());
             video.RTPEncodingAvaliable = true;
             video.avgBitRate = averageDataRate;
             video.numberOfChunks = fileIndex;
             video.streamingLive = false;
-            Globals.GlobalData.peerController.broadcastStreamDead(fname.getName());
+            video.currentStreamingChunk = -1;
+            Globals.GlobalData.peerController.broadcastStreamDead(sourceVideo.getName());
         }
         catch (Exception e) {
           e.printStackTrace();

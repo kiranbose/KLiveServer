@@ -16,6 +16,7 @@ public class RTPFileGenerator extends Thread{
 
     String srcFilePath;
     String destFolderPath;
+    public static int videoSegmentLength=5;
     static int RTPStreamPort=1234;
     /**
      * createes a thread to transcode srcfile to rtp streams

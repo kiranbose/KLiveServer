@@ -51,9 +51,15 @@ public class PeerConnection extends Thread{
                 }
                 else if(request.equalsIgnoreCase("stream"))
                 {
-                     
-                     final String requestedFileName=dis.readLine();
-                     startVideoStream(requestedFileName);
+                    final String requestedFileName=dis.readLine();
+                    Globals.log.message(userID+": request stream "+requestedFileName);
+                    startVideoStream(requestedFileName);
+                }
+                else if(request.equalsIgnoreCase("getCurrentStreamingChunk"))
+                {
+                    final String requestedFileName=dis.readLine();
+                    Globals.log.message(userID+": request current playing time of stream"+requestedFileName);
+                    getCurrentStreamingChunk(requestedFileName);
                 }
                 else if(request.equalsIgnoreCase("close"))
                 {
@@ -136,6 +142,47 @@ public class PeerConnection extends Thread{
                    Globals.GlobalData.peerController.broadcastStreamDead(fname);
                }
            },video.duration*1000);
+        }
+    }
+    
+    public void getCurrentStreamingChunk(String fileName)
+    {
+        VideoDetails video = Globals.GlobalData.videoLibrary.getVideoDetails(fileName);
+        if(video==null)
+        {
+            Globals.log.error(userID+" getCurrentStreamingChunk requested invalid stream "+fileName);
+            return;
+        }
+        try {
+            DataOutputStream dout = new DataOutputStream(sock.getOutputStream());
+            PrintStream ps = new PrintStream(dout);
+
+            if(!video.streamingLive)
+            {
+                Globals.log.error(userID+" getCurrentStreamingChunk stream not live "+fileName);
+                ps.print("NotStreaming\r\n");
+                ps.print(fileName+"\r\n");
+            }
+            else if(video.currentStreamingChunk !=-1 )//vlc encoding is going on
+            {
+                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+video.currentStreamingChunk);
+                ps.print("currentStreamingChunk\r\n");
+                ps.print(fileName+"\r\n");
+                ps.print(video.currentStreamingChunk+"\r\n");
+            }
+            else if(video.currentStreamingChunk !=-1 )//ftream from rtp files
+            {
+                long time = System.currentTimeMillis();
+                long currentChunk = (time - video.videoStreamStartTime)/RTPFileGenerator.videoSegmentLength;
+                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+video.currentStreamingChunk);
+                ps.print("currentStreamingChunk\r\n");
+                ps.print(fileName+"\r\n");
+                ps.print(currentChunk+"\r\n");
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 }
