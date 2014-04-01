@@ -1,0 +1,5 @@
+VideoStorePath 
+/home/server/Videos/KLiveServer/Videos
+RTPVideoStorePath
+/home/server/Videos/KLiveServer/RTPVideos
+

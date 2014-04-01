@@ -7,6 +7,9 @@
 package Globals;
 
 import VideoStore.VideoLibrary;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import kliveserver.PeerController;
 
 /**
@@ -14,13 +17,34 @@ import kliveserver.PeerController;
  * @author Kiran
  */
 public class GlobalData {
-    public static String VideoStorePath = "/home/server/Videos/KLiveServer/Videos";
-    public static String RTPVideoStorePath = "/home/server/Videos/KLiveServer/RTPVideos";
+    public static String VideoStorePath = "./KLiveServer/Videos";
+    public static String RTPVideoStorePath = "./KLiveServer/RTPVideos";
     public static boolean logEnabled = true;
     public static VideoLibrary videoLibrary;
     public static PeerController peerController;
     public static void init()
     {
+        File settings = new File("settings.txt");
+        if(!settings.exists())
+        {
+            Globals.log.error("Error: Settings file doesnt exist "+settings.getAbsolutePath());
+            Globals.log.error("proceeding with default settings");
+        }
+        else
+        {
+            try {
+                FileInputStream fis = new FileInputStream(settings);
+                DataInputStream dis = new DataInputStream(fis);
+                dis.readLine();//VideoFolder
+                VideoStorePath = dis.readLine();
+                Globals.log.message("load setting video store path: "+VideoStorePath);
+                dis.readLine();//RTPFolder
+                RTPVideoStorePath = dis.readLine();
+                Globals.log.message("load setting RTP Video path: "+RTPVideoStorePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         videoLibrary = new VideoLibrary();
         peerController = new PeerController();
     }
