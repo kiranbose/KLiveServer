@@ -55,6 +55,13 @@ public class PeerConnection extends Thread{
                      final String requestedFileName=dis.readLine();
                      startVideoStream(requestedFileName);
                 }
+                else if(request.equalsIgnoreCase("close"))
+                {
+                    Globals.log.message(userID+": closed ");
+                    dis.close();
+                    sock.close();
+                    break;
+                }
                     
             }
         } catch (Exception e) {
@@ -126,6 +133,7 @@ public class PeerConnection extends Thread{
                    Globals.log.message(userID+": stream stopped by timer "+fname);
                    video.streamingLive = false;
                    video.videoStreamStartTime = 0;
+                   Globals.GlobalData.peerController.broadcastStreamDead(fname);
                }
            },video.duration*1000);
         }

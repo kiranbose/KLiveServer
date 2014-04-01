@@ -123,6 +123,7 @@ public class FileCreator {
             video.avgBitRate = averageDataRate;
             video.numberOfChunks = fileIndex;
             video.streamingLive = false;
+            Globals.GlobalData.peerController.broadcastStreamDead(fname.getName());
         }
         catch (Exception e) {
           e.printStackTrace();
