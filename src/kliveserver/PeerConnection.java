@@ -73,6 +73,7 @@ public class PeerConnection extends Thread{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Globals.log.message(userID+": disconnected ");
         Globals.GlobalData.peerController.removePeer(userID);
     }
     
