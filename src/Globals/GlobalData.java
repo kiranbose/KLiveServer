@@ -19,6 +19,7 @@ import kliveserver.PeerController;
 public class GlobalData {
     public static String VideoStorePath = "./KLiveServer/Videos";
     public static String RTPVideoStorePath = "./KLiveServer/RTPVideos";
+    public static int serverPort = 8080;
     public static boolean logEnabled = true;
     public static VideoLibrary videoLibrary;
     public static PeerController peerController;
@@ -41,6 +42,9 @@ public class GlobalData {
                 dis.readLine();//RTPFolder
                 RTPVideoStorePath = dis.readLine();
                 Globals.log.message("load setting RTP Video path: "+RTPVideoStorePath);
+                dis.readLine();//server port
+                serverPort = Integer.parseInt(dis.readLine());
+                Globals.log.message("load setting kLiveServer Port: "+serverPort);
             } catch (Exception e) {
                 e.printStackTrace();
             }

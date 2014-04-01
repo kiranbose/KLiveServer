@@ -19,6 +19,7 @@ public class SocketListener {
     {
         try{
             ServerSocket server = new ServerSocket(port);
+            Globals.log.message("kLiveSever started on port "+port);
             Socket clientSocket;
             DataInputStream dis;
             while(true)

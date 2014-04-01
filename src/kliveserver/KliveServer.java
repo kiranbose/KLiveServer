@@ -20,7 +20,7 @@ public class KliveServer {
     {
         Globals.GlobalData.init();
         SocketListener server = new SocketListener();
-        server.StartServerOn(8080);
+        server.StartServerOn(Globals.GlobalData.serverPort);
     }
 }
 
