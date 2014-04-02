@@ -68,9 +68,9 @@ public class FileCreator {
                 if(timeStamp!=prevTimeStamp)
                 {
                     long newtime=System.currentTimeMillis()/1000;
-                    videoDuration+= newtime-time;
                     if(newtime-time>=RTPFileGenerator.videoSegmentLength)
                     {
+                        videoDuration+= newtime-time;
                         dOut.close();
                         fo.close();
                         video.currentStreamingChunk = fileIndex;
