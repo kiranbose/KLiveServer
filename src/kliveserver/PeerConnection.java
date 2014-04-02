@@ -114,6 +114,7 @@ public class PeerConnection extends Thread{
         }
 
         Globals.log.message(userID+": Streaming requested for "+video.fileName);
+        Globals.GlobalData.peerController.broadcastNewStreamLive(fileName);
         if(!video.RTPEncodingAvaliable && !video.streamingLive)
         {
             video.streamingLive = true;

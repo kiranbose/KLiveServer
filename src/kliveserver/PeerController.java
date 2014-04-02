@@ -65,18 +65,21 @@ public class PeerController {
     
     public void broadcastNewVideoAvaliable(String videoFileName)
     {
+        Globals.log.message("Broadcasting new video available "+videoFileName);
         String messages[] = {"NewVideoAvaliable",videoFileName};
         broadcastMessages(messages);
     }
     
     public void broadcastNewStreamLive(String videoFileName)
     {
+        Globals.log.message("Broadcasting new video stream live "+videoFileName);
         String messages[] = {"NewStreamLive",videoFileName};
         broadcastMessages(messages);
     }
     
     public void broadcastStreamDead(String videoFileName)
     {
+        Globals.log.message("Broadcasting video stream dead "+videoFileName);
         String messages[] = {"StreamDead",videoFileName};
         broadcastMessages(messages);
     }
