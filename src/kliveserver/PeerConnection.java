@@ -172,11 +172,11 @@ public class PeerConnection extends Thread{
                 ps.print(fileName+"\r\n");
                 ps.print(video.currentStreamingChunk+"\r\n");
             }
-            else //fstream from rtp files
+            else if(video.currentStreamingChunk !=-1 )//ftream from rtp files
             {
                 long time = System.currentTimeMillis();
-                long currentChunk = (time - video.videoStreamStartTime)/(RTPFileGenerator.videoSegmentLength*1000);
-                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+currentChunk);
+                long currentChunk = (time - video.videoStreamStartTime)/RTPFileGenerator.videoSegmentLength;
+                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+video.currentStreamingChunk);
                 ps.print("currentStreamingChunk\r\n");
                 ps.print(fileName+"\r\n");
                 ps.print(currentChunk+"\r\n");
