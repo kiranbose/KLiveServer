@@ -30,17 +30,18 @@ public class FileCreator {
         long videoDuration = 0;
         File sourceVideo=new File(srcFilePath);
         VideoDetails video = Globals.GlobalData.videoLibrary.getVideoDetails(sourceVideo.getName());
+        File destFolder=new File(destFilePath); 
         try
         {
             int counter=0;
 
-            File destFolder=new File(destFilePath); 
             System.out.println(destFolder.getCanonicalPath());
             if(!destFolder.exists())
             {
               destFolder.mkdirs();
             }
-            fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
+            File temp = new File(destFolder+"/temp"+fileIndex);
+            fo = new FileOutputStream(temp);
              dOut = new DataOutputStream(fo);
 
             DatagramSocket clientSocket = new DatagramSocket(rtpStreamPort);
@@ -74,9 +75,11 @@ public class FileCreator {
                         dOut.close();
                         fo.close();
                         video.currentStreamingChunk = fileIndex;
+                        File actualFile = new File(destFolder+"/chunk"+fileIndex);
+                        temp.renameTo(actualFile);
                         fileIndex++;
                         counter=0;
-                        fo = new FileOutputStream(destFolder+"/chunk"+fileIndex);
+                        fo = new FileOutputStream(temp);
                         dOut = new DataOutputStream(fo);
                         Globals.log.message("Converting "+sourceVideo.getName()+" with SegmentDataRate : "+
                                 (bytesInSegment/1024/5)+"KBps"+" Duration:"+videoDuration+" timeGap "+(newtime-time));
@@ -90,7 +93,6 @@ public class FileCreator {
         } 
         catch (Exception e) {
           e.printStackTrace();
-
         }
         
         Globals.log.message("RTP file generation complete for "+srcFilePath);
@@ -99,13 +101,15 @@ public class FileCreator {
             try{
                 fo.close();
                 dOut.close();
+                File temp = new File(destFolder+"/temp"+fileIndex);
+                File actualFile = new File(destFolder+"/chunk"+fileIndex);
+                temp.renameTo(actualFile);
             }catch(Exception e){e.printStackTrace();}
         }
         
         try{
             
             int averageDataRate = bytesRecieved/((fileIndex+1)*RTPFileGenerator.videoSegmentLength);
-            File destFolder=new File(destFilePath); 
             fo = new FileOutputStream(destFolder+"/rtp.log");
             dOut = new DataOutputStream(fo);
             PrintStream ps = new PrintStream(dOut);
