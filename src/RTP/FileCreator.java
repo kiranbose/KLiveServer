@@ -127,6 +127,7 @@ public class FileCreator {
             video.numberOfChunks = fileIndex;
             video.streamingLive = false;
             video.currentStreamingChunk = -1;
+            video.duration = (int) videoDuration;
             Globals.GlobalData.peerController.broadcastStreamDead(sourceVideo.getName());
         }
         catch (Exception e) {
