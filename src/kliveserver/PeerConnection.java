@@ -181,6 +181,9 @@ public class PeerConnection extends Thread{
                 ps.print(fileName+"\r\n");
                 ps.print(currentChunk+"\r\n");
             }
+            
+            ps.flush();
+            dout.flush();
         }
         catch (Exception e)
         {
