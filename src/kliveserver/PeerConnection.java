@@ -164,22 +164,30 @@ public class PeerConnection extends Thread{
                 Globals.log.error(userID+" getCurrentStreamingChunk stream not live "+fileName);
                 ps.print("NotStreaming\r\n");
                 ps.print(fileName+"\r\n");
+                ps.flush();
+                dout.flush();
             }
             else if(video.currentStreamingChunk !=-1 )//vlc encoding is going on
             {
-                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+video.currentStreamingChunk);
+                int chunkToRead = video.currentStreamingChunk - 1;
+                if(chunkToRead<0) chunkToRead = 0;
                 ps.print("currentStreamingChunk\r\n");
                 ps.print(fileName+"\r\n");
-                ps.print(video.currentStreamingChunk+"\r\n");
+                ps.print(chunkToRead+"\r\n");
+                ps.flush();
+                dout.flush();
+                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+video.currentStreamingChunk);
             }
             else //ftream from rtp files
             {
                 long time = System.currentTimeMillis();
                 long currentChunk = (time - video.videoStreamStartTime)/(RTPFileGenerator.videoSegmentLength*1000);
-                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+currentChunk);
                 ps.print("currentStreamingChunk\r\n");
                 ps.print(fileName+"\r\n");
                 ps.print(currentChunk+"\r\n");
+                ps.flush();
+                dout.flush();
+                Globals.log.message(userID+" getCurrentStreamingChunk  "+fileName+ "chunk "+currentChunk);
             }
             
             ps.flush();
