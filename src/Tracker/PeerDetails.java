@@ -14,11 +14,13 @@ public class PeerDetails {
     public String userName;
     public String ip;
     public int port;
+    public CachedVideoDetails chunkCache;
 
     public PeerDetails() {
         userName = "user";
         ip = "";
         port = Globals.GlobalData.serverPort;
+        chunkCache = new CachedVideoDetails();
     }
     
 }

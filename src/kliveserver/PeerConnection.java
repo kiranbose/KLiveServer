@@ -61,6 +61,13 @@ public class PeerConnection extends Thread{
                     Globals.log.message(userID+": request current playing time of stream"+requestedFileName);
                     getCurrentStreamingChunk(requestedFileName);
                 }
+                else if(request.equalsIgnoreCase("cachedVideoChunks"))
+                {
+                    final String cachedFileName = dis.readLine();
+                    final String chunks = dis.readLine();
+                    Globals.log.message(userID+": tracker cached "+cachedFileName+" chunks "+chunks);
+                    Globals.GlobalData.peerTracker.addCachedChunk(userID, cachedFileName, chunks);
+                }
                 else if(request.equalsIgnoreCase("close"))
                 {
                     Globals.log.message(userID+": closed ");

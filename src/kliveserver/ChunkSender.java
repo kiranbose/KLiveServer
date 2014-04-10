@@ -48,9 +48,13 @@ public class ChunkSender extends Thread{
             }
             else
             {
-                Globals.log.error("sending "+chunkNumber+" of "+fileName);
+                Globals.log.message("sending "+chunkNumber+" of "+fileName);
+                String alternateSources = Globals.GlobalData.peerTracker.getAlternateSources(fileName, chunkNumber);
+                Globals.log.message("alternate sources "+alternateSources);
                 ps.print("ChunkSize\r\n");
                 ps.print(java.lang.Long.toString(chunkFile.length())+"\r\n");
+                ps.print("alternateSources\r\n");
+                ps.print(alternateSources+"\r\n");
                 ps.print("data\r\n");
                 sendChunk(chunkFile,dout);
             }
