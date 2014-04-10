@@ -6,6 +6,7 @@
 
 package Globals;
 
+import Tracker.PeerTracker;
 import VideoStore.VideoLibrary;
 import java.io.DataInputStream;
 import java.io.File;
@@ -23,6 +24,7 @@ public class GlobalData {
     public static boolean logEnabled = true;
     public static VideoLibrary videoLibrary;
     public static PeerController peerController;
+    public static PeerTracker peerTracker;
     public static void init()
     {
         File settings = new File("settings.txt");
@@ -51,5 +53,6 @@ public class GlobalData {
         }
         videoLibrary = new VideoLibrary();
         peerController = new PeerController();
+        peerTracker = new PeerTracker();
     }
 }

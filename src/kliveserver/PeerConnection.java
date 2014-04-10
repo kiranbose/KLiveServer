@@ -75,6 +75,8 @@ public class PeerConnection extends Thread{
         }
         Globals.log.message(userID+": disconnected ");
         Globals.GlobalData.peerController.removePeer(userID);
+        Globals.GlobalData.peerTracker.removeDetails(userID);
+        Globals.GlobalData.peerController.broadcastPeerList();
     }
     
     public void sendChannelDetails()

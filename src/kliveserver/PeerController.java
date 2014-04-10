@@ -6,8 +6,10 @@
 
 package kliveserver;
 
+import Tracker.PeerDetails;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -82,5 +84,27 @@ public class PeerController {
         Globals.log.message("Broadcasting video stream dead "+videoFileName);
         String messages[] = {"StreamDead",videoFileName};
         broadcastMessages(messages);
+    }
+    
+    public void broadcastPeerList()
+    {
+        Globals.log.message("Broadcasting connected peer list ");
+        ArrayList<String> msg = new ArrayList<String>();
+        msg.add("clearPeerList");
+        if(Globals.GlobalData.peerTracker.peerList.size()==0)
+            Globals.log.message("No connected peers to Broadcast");
+        for(int i=0;i<Globals.GlobalData.peerTracker.peerList.size();i++)
+        {
+            PeerDetails detail = Globals.GlobalData.peerTracker.peerList.get(i);
+            msg.add("peerDetail");
+            msg.add(detail.userName);
+            msg.add(detail.ip);
+            msg.add(java.lang.Integer.toString(detail.port));
+            Globals.log.message("peerDetail "+detail.userName+":"+detail.ip+":"+detail.port);
+        }
+        String array[] = new String[msg.size()];
+        for(int i=0;i<msg.size();i++)
+            array[i]= msg.get(i);
+        broadcastMessages(array);
     }
 }

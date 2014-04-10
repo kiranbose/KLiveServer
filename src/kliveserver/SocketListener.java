@@ -31,8 +31,12 @@ public class SocketListener {
                     if(request.equalsIgnoreCase("control"))
                     {
                         String userID = dis.readLine();
-                        Globals.log.message(userID+": Connected for control ");
+                        String peerIP = dis.readLine();
+                        int peerPort = java.lang.Integer.parseInt(dis.readLine());
+                        Globals.log.message(userID+": Connected for control peer-ip: "+peerIP+":"+peerPort);
                         Globals.GlobalData.peerController.addPeer(clientSocket,userID);
+                        Globals.GlobalData.peerTracker.addPeer(userID, peerIP, peerPort);
+                        Globals.GlobalData.peerController.broadcastPeerList();
                     }
                     else if(request.equalsIgnoreCase("upload"))
                     {
